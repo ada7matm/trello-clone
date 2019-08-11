@@ -5,6 +5,7 @@ import Card from 'models/Card'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlus} from '@fortawesome/free-solid-svg-icons'
 import './Column.scss'
+import CardProvider, { CardConsumer } from 'components/Contexts/CardContext';
 
 class Column extends React.Component {
     state = {
@@ -18,18 +19,28 @@ class Column extends React.Component {
         return (
             <div className='column'>
                 <p className='title'>{title}</p>
-                <CardList cards={this.state.cards} />
-                <AddInputWithToggle 
-                    type='textarea'
-                    placeholder='Introduzca un título para esta tarjeta'
-                    buttonText='Añadir tarjeta'
-                    onAddValue={this.addCard}
-                >
-                    <div className='add-card-toggle'>
-                        <FontAwesomeIcon icon={faPlus} />
-                        Añada una tarjeta
-                    </div>
-                </AddInputWithToggle>   
+                <CardProvider>
+                    <CardConsumer>
+                        {
+                            ({getCards, addCard}) => (
+                                <>
+                                    <CardList cards={getCards(this.props.id)} />
+                                    <AddInputWithToggle 
+                                        type='textarea'
+                                        placeholder='Introduzca un título para esta tarjeta'
+                                        buttonText='Añadir tarjeta'
+                                        onAddValue={title => addCard(title, this.props.id)}
+                                    >
+                                        <div className='add-card-toggle'>
+                                            <FontAwesomeIcon icon={faPlus} />
+                                            Añada una tarjeta
+                                        </div>
+                                    </AddInputWithToggle>   
+                                </>
+                            )
+                        }
+                    </CardConsumer>
+                </CardProvider>
             </div>
         )
     }
